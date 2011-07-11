@@ -63,8 +63,9 @@ module Sinatra
         body = @body || []
         body = [body] if body.respond_to? :to_str
         if body.respond_to?(:to_ary)
-          header["Content-Length"] = body.to_ary.
-            inject(0) { |len, part| len + Rack::Utils.bytesize(part) }.to_s
+          length = 0
+          body.each { |part| length += Rack::Utils.bytesize(part) }
+          headers["Content-Length"] = length.to_s
         end
         [status.to_i, header.to_hash, body]
       end
